@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Micro:bit Serveren</title>
+        <link rel="stylesheet" href="stylesheet.css">
+        <link rel="stylesheet" href="toggleStyle.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Bit:Chat</h1>
+        <div class="buttonSpace">
+            <button id="startbutton" class="buttonStyle">Forbind micro:bit</button>
+        </div>
+        <div class="buttonSpace">
+            <button id="trafficButton" class="openingButton buttonStyle disabledButton">Besked-trafikken</button>
+            <button id="imageButton" class="openingButton buttonStyle disabledButton">Billede-byggeren</button>
+        </div>
+        <main>
+            <div id="imageBuilderContent" style="display: none;">
+                <div id="knownImages"></div>
+                <div id="inputArea"></div>
+                <div id="outputArea"></div>
+                <div id="buttonContainer">
+                    <button id="finishImageButton">Gem billede</button>
+                </div>
+            </div>
+            
+            
+            <div id="trafficContent" style="display: none;">
+                <div id="serverContainer">
+                    <div id="translaterSpace" class="hidden">
+                        <div id="gridSpace">
+                            <div id="knownMicrobits" style="display: none;">
+                                <h2>Forbundet til serveren:</h2>
+                            </div>
+                    
+                            <div id="messageBoard" style="display: none;">
+                                <h2>Besked sendt:</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="serverSpace" class="hidden">
+                        <h2>Bit:Chat Server</h2>
+                    </div>
+                </div>
+                <div id="interfaceControlSpace">
+                    <div class="toggleButton">
+                        <p class="toggleText">Se Server</p>
+                        <div id="serverButton" class="switch">
+                            <div id="serverButtonInner" class="switchInner"></div>
+                        </div>    
+                    </div>
+                    <div class="toggleButton">
+                        <p class="toggleText">Se Oversætter</p>
+                        <div  id="translaterButton" class="switch">
+                            <div  id="translaterButtonInner" class="switchInner"></div>
+                        </div>    
+                    </div>
+                    <div class="toggleButton">
+                        <p class="toggleText">Tilføj modtager</p>
+                        <div  id="recipientButton" class="switch">
+                            <div  id="recipientButtonInner" class="switchInner"></div>
+                        </div>    
+                    </div>
+                    <div class="toggleButton">
+                        <p class="toggleText">Tillad Kryptering</p>
+                        <div id="encryptButton" class="switch">
+                            <div id="encryptButtonInner" class="switchInner"></div>
+                        </div>    
+                    </div>
+                    <div class="toggleButton">
+                        <p class="toggleText">Tillad Hacking</p>
+                        <div  id="hackingButton" class="switch">
+                            <div  id="hackingButtonInner" class="switchInner"></div>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="hackingSpace" class="hidden">
+            <div id="hackingPopUp">
+                <h1>Hack beskeder</h1>
+                <p id="hackingDescription">Lav om i beskeden fra id[<span id="hackSender"></span>] til id[<span id="hachReciever"></span>]</p>
+                <div id="hacingContent">
+                    <div id="inputAreaHack"></div>
+                    <div id="outputAreaHack"></div>
+                </div>
+                <div id="hackingButtonSpace">
+                    <button id="noUpdateHackButton"class="buttonStyle">Send videre uden ændringer</button>
+                    <button id="updateHackButton" class="buttonStyle">Gem ændringer</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="variables.js"></script>
+        <script src="imageStorage.js"></script>
+        <script src="serverActions.js"></script>
+        <script src="hackingEditor.js"></script>
+        <script src="script.js"></script>
+        <script src="imageEditor.js"></script>
+        <script src="interfaceControl.js"></script>
+    </body>
+</html>

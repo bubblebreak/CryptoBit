@@ -1,0 +1,46 @@
+.switch {
+    height: 20px;
+    width: 40px;
+    background-color: gray;
+    border: 4px solid gray;
+    cursor: pointer;
+    border-radius: 1000px;
+}
+
+.switchInner {
+    position: relative;
+    height: 100%;
+    width: 50%;
+    background-color: white;
+    float: left;
+    border-radius: 100%;
+}
+
+.toggleText{
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.toggleButton {
+    display: flex;
+}
+
+.toggleInnerActive {
+    float: right;
+}
+
+.toggleActive {
+    background-color: #488C03;
+    border-color: #488C03;
+}
+
+.hidden{
+    display: none;
+}
+
+#interfaceControlSpace{
+    font-family: "Momo Trust Display", sans-serif;
+}
