@@ -77,9 +77,9 @@ async function readLoop() {
  * Function to check the received message
  */
 function checkMessage(message){
-  console.log("nm = " + message.toString())
+  //console.log("nm = " + message.toString())
   //console.log("lm = " + lastMessage.toString())
-  if(lastMessage != "" && message.toString().match(lastMessage.toString())){
+  if(lastMessage != "" && message.toString().match(lastMessage.toString()) && lastMessage != "lc"){
       console.log("Damn")
       return;
       
@@ -94,7 +94,6 @@ function checkMessage(message){
     }
   }
   if(messageCode == "nm"){ // new message
-    let tempTimeDifference = new Date().getTime()/1000 - lastResetTime
     let messageSender = message.split("_")[1]
     let messageReceiver = message.split("_")[2]
     let messageIndex = Number(message.split("_")[3])
@@ -109,19 +108,31 @@ function checkMessage(message){
         newMessageList[messageIndex][1] = messageBit;
       }
     }
-    else if(newMessageList[5][0] == messageSender){
-      if(!newMessageList[messageIndex][0]){
-        newMessageList[messageIndex][0] = true;
-        newMessageList[messageIndex][1] = messageBit;
+    if(allowRecipient){
+      if(newMessageList[5][0] == messageSender){
+        if(!newMessageList[messageIndex][0]){
+          newMessageList[messageIndex][0] = true;
+          newMessageList[messageIndex][1] = messageBit;
+        }
+      }
+    } else {
+      if(newMessageList[5][0] == messageSender || newMessageList[5][0] == messageReceiver){
+        if(!newMessageList[messageIndex][0]){
+          //console.log("Wohoo!! _ " + messageIndex)
+          newMessageList[messageIndex][0] = true;
+          newMessageList[messageIndex][1] = messageBit;
+        }
       }
     }
-    else{console.log("something went wrong")}
+    
     let completedMessage = true;
     for(let i=0; i<5; i++){
       if(!newMessageList[i][0]){
         completedMessage = false;
       }
     }
+
+
     if(completedMessage){
       console.log("complete")
       let messageString = [];
@@ -135,25 +146,25 @@ function checkMessage(message){
       let correctCounter = 0;
       if(messageSender == lastMessageStats[0]){
         correctCounter +=1;
-        console.log(correctCounter + " sender error")
+        //console.log(correctCounter + " sender error")
       }
       if(messageReceiver == lastMessageStats[1]){
         correctCounter +=1;
-        console.log(correctCounter + " receiver error")
+        //console.log(correctCounter + " receiver error")
 
       }
       for(let i=0; i<messageString.length;i++){
         if(messageString[i] == lastMessageStats[2][i]){
           correctCounter +=1
-          console.log(correctCounter + " message error")
+          //console.log(correctCounter + " message error")
         }
       }
 
       let timeDifference = new Date().getTime()/1000 - lastResetTime
-      console.log(timeDifference)
+      //console.log(timeDifference)
 
 
-      if(timeDifference>10){
+      if(timeDifference>12){
         lastResetTime = new Date().getTime()/1000;
         console.log(timeDifference)
         console.log("checking")
@@ -185,6 +196,12 @@ function checkMessage(message){
     writeToMB("start");
     for(let i=0; i<knownMicrobits.length; i++){
       writeToMB("known_" + knownMicrobits[i][0])
+    }
+    if(newImages.length > 0){
+      for(let i=0; i<newImages.length; i++){
+        writeToMB("knownImg_" + newImages[i])
+        console.log(newImages[i])
+      }
     }
     if(allowEncryption){
       writeToMB("yesEncrypt")
