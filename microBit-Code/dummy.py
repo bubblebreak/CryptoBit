@@ -1,4 +1,4 @@
-radioChannel = 1        # all microbits should be on the same radio channel
+radioChannel = 2        # all microbits should be on the same radio channel
 
 # Imports go at the top
 from microbit import *
@@ -7,6 +7,7 @@ import struct
 import radio
 import random
 import music
+import time
 
 idNumber = "0"
 messageNumber = 0
@@ -18,6 +19,8 @@ allowRecipient = False
 outputMessage = []
 wrongMessage = False
 pitchList = [6,8,10,12]
+lastRecordedMessage = 0
+resetMicrobitTime = False
 
 ledImages = [[[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[1,0,0,0,1],[0,1,1,1,0]], 
             [[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[0,1,1,1,0],[1,0,0,0,1]]];
@@ -51,6 +54,7 @@ choosingContent = False
 choosingRecipient = False
 encryptingMessage = False
 sendingMessage = False
+readyToSend = False
 code = []
 
 ###################################################
@@ -128,9 +132,10 @@ def createEncryption(messageList):
     return messageList
                     
 def encryptImage(imageList):
-    display.clear()
     sleep(500)
     for j in range(5): # Kolonne
+        for l in range(5):
+            display.set_pixel(j,l,0)
         for k in range(5): # række
             ledStrength = int(imageList[k][j])
             if ledStrength<9:
@@ -157,7 +162,12 @@ while True:
                 messageSender = int(message.split("_")[4])
                 if encryptable:
                     codeString = message.split("_")[5]
-                if not messageConstructIndex[messageIndex] or not messageConstruct[messageIndex] == str(message.split("_")[3]):
+                if time.ticks_ms()-lastRecordedMessage>3000:
+                    for i in range(5):
+                        messageConstructIndex[i] = False
+                        messageConstruct[i] = ""
+                    lastRecordedMessage = time.ticks_ms()
+                if not messageConstruct[messageIndex] == str(message.split("_")[3]):
                     messageConstructIndex[messageIndex] = True
                     messageConstruct[messageIndex] = str(message.split("_")[3])
                 messageComplete = True                
@@ -201,7 +211,12 @@ while True:
                 messageSender = int(message.split("_")[4])
                 if encryptable:
                     codeString = message.split("_")[5]
-                if not messageConstructIndex[messageIndex]:
+                if time.ticks_ms()-lastRecordedMessage>3000:
+                    lastRecordedMessage = time.ticks_ms()
+                    for i in range(5):
+                        messageConstructIndex[i] = False
+                        messageConstruct[i] = ""
+                if not messageConstructIndex[messageIndex] or not messageConstruct[messageIndex] == str(message.split("_")[3]):
                     messageConstructIndex[messageIndex] = True
                     messageConstruct[messageIndex] = str(message.split("_")[3])
                 messageComplete = True                
@@ -275,46 +290,36 @@ while True:
                 display.show(Image.ARROW_W)
                 sleep(1000)
                 display.show(int(messageSender)+1)
-                sleep(2000)
-                outputMessage = []
-                code = []
-                wrongMessage = False
-                codeString = ""
-                for i in range(5):
-                    messageConstructIndex[i] = False
-                    messageConstruct[i] = ""
+                resetMicrobitTime = True
+                
             else:
                 display.clear()
                 display.show(Image.NO)
-                sleep(4000)
-            display.clear()
-            sleep(2000)
-            display.show(int(idNumber)+1)
-            messageSender = 0
-            messageComplete = False
-            outputMessage = []
-            code = []
-            wrongMessage = False
-            for i in range(5):
-                messageConstructIndex[i] = False
-                messageConstruct[i] = ""
+                sleep(2000)
+                resetMicrobitTime = True
+                
         else:
             sleep(4000)
             display.show(Image.ARROW_W)
             sleep(1000)
             display.show(int(messageSender)+1)
-            sleep(2000)
-            display.clear()
-            sleep(2000)
-            display.show(int(idNumber)+1)
-            messageSender = 0
-            messageComplete = False
-            outputMessage = []
-            code = []
-            wrongMessage = False
-            for i in range(5):
-                messageConstructIndex[i] = False
-                messageConstruct[i] = ""
+            resetMicrobitTime = True
+
+    if resetMicrobitTime:
+        sleep(2000)
+        display.clear()
+        display.show(int(idNumber)+1)
+        outputMessage = []
+        code = []
+        wrongMessage = False
+        codeString = ""
+        messageSender = 0
+        messageComplete = False
+        for i in range(5):
+            messageConstructIndex[i] = False
+            messageConstruct[i] = ""
+        lastRecordedMessage = time.ticks_ms()
+        resetMicrobitTime = False
     
     if not known:
         sendMessage("hello")
@@ -374,7 +379,7 @@ while True:
                 display.clear()
             display.clear()
             display.show("A")
-            sleep(1000)
+            sleep(500)
             display.clear()
             code.append("0")
             for i in range(len(code)):
@@ -389,7 +394,7 @@ while True:
                 display.clear()
             display.clear()
             display.show("B")
-            sleep(1000)
+            sleep(500)
             display.clear()
             code.append("1")
             for i in range(len(code)):
@@ -400,33 +405,42 @@ while True:
                     display.set_pixel(i,2,9)
 
         if len(code)>4:
-            Image(setImage(messageNumber, ledImages))
-            if accelerometer.was_gesture('shake'):     
-                for i in range(3):
-                    for j in range(5):
-                        for k in range(5):
-                            if random.randint(0,1)>0:
-                                display.set_pixel(k,j,9)
-                            else:
-                                display.set_pixel(k,j,0)
-                    sleep(500)
-                outputMessage = createEncryption(outputMessage)
-                encryptImage(outputMessage)
-                codeString = ""
-                for i in range(5):
-                    codeString += code[i]
-                code = []
-                            
-        if pin_logo.is_touched():
-            display.show(Image.ARROW_E)
-            sleep(1000)
-            knownRecipientList = setRecipients()
-            display.show(knownRecipientList[0]+1)
-            if allowRecipient:
-                choosingRecipient = True
-            else:
-                sendingMessage = True
-            encryptingMessage = False
+            encryptionDone = True
+            display.clear()
+            display.show(Image(setImage(messageNumber, ledImages)))
+            while encryptionDone:
+                if accelerometer.was_gesture('shake'):     
+                    for i in range(3):
+                        for j in range(5):
+                            for k in range(5):
+                                if random.randint(0,1)>0:
+                                    display.set_pixel(k,j,9)
+                                else:
+                                    display.set_pixel(k,j,0)
+                        sleep(500)
+                    outputMessage = createEncryption(outputMessage)
+                    display.clear()
+                    display.show(Image(setImage(messageNumber, ledImages)))
+                    encryptImage(outputMessage)
+                    codeString = ""
+                    for i in range(5):
+                        codeString += code[i]
+                    code = []
+                    readyToSend = True
+                    encryptionDone = False
+            
+            while readyToSend:
+                if pin_logo.is_touched():
+                    display.show(Image.ARROW_E)
+                    sleep(1000)
+                    knownRecipientList = setRecipients()
+                    display.show(knownRecipientList[0]+1)
+                    if allowRecipient:
+                        choosingRecipient = True
+                    else:
+                        sendingMessage = True
+                    encryptingMessage = False
+                    readyToSend = False
                         
     while choosingRecipient:
         if button_a.was_pressed():
