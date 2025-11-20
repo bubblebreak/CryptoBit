@@ -2,11 +2,6 @@ createInputActivity("IB", "inputArea", "outputArea");
 createInputActivity("HB", "inputAreaHack", "outputAreaHack")
 displayKnownImages();
 
-document.getElementById("imageButton").addEventListener("click", e=>{
-    document.getElementById("imageBuilderContent").style.display="block";
-    document.getElementById("trafficContent").style.display="none";
-})
-
 document.getElementById("finishImageButton").addEventListener("click", e=>{
     if(!messageValid("IB")){
         alert("Et eller flere af tallene er ikke 0 eller 1");
@@ -16,9 +11,12 @@ document.getElementById("finishImageButton").addEventListener("click", e=>{
     for(let i=0; i<5; i++){
         let rowarray = []
         for(let j=0; j<5; j++){
-            rowarray.push(Number(document.getElementById("IBinput" + i + "," + j).value))
-            document.getElementById("IBinput" + i + "," + j).value = 0;
+            rowarray.push(Number(document.getElementById("IBinput" + i + "," + j).innerText))
+            document.getElementById("IBinput" + i + "," + j).innerText = "0";
             document.getElementById("IBfield" + i + "," + j).style.backgroundColor = "white";
+            if(document.getElementById("IBinput" + i + "," + j).classList.contains("activeField")){
+                document.getElementById("IBinput" + i + "," + j).classList.remove("activeField")
+            }
         }
         outputArray.push(rowarray);
     }
@@ -36,6 +34,8 @@ document.getElementById("finishImageButton").addEventListener("click", e=>{
     }
     console.log(messageString);
 
+    newImages.push(messageString)
+    console.log(newImages)
     writeToMB("newImg_" + messageString)
 })
 
@@ -69,37 +69,24 @@ function createInputActivity(prefix, inputId, outputId){
             })
             newRowEdge.appendChild(newField);
 
-            let newInput = document.createElement("input")
-            newInput.setAttribute("type", "text")
+            let newInput = document.createElement("p")
             newInput.setAttribute("id", prefix + "input" + i + "," + j)
-            newInput.value = "0"
+            newInput.innerText = "0"
             newInput.classList.add("inputField")
-            newInput.addEventListener("keyup",e=>{
-                if(newInput.value == "1"){
+            newInput.style.backgroundColor ="white"
+            newInput.addEventListener("click",e=>{
+                newInput.classList.toggle("activeField")
+                if(newInput.classList.contains("activeField")){
+                    document.getElementById(prefix + "input" + i + "," + j).innerText = "1"
                     document.getElementById(prefix + "field" + i + "," + j).style.backgroundColor = lightColor;
                     document.getElementById(prefix + "input" + i + "," + j).style.backgroundColor= "white"; 
 
                 }
-                if(newInput.value == "0"){
+                else{
+                    document.getElementById(prefix + "input" + i + "," + j).innerText = "0"
                     document.getElementById(prefix + "field" + i + "," + j).style.backgroundColor = "white";
                     document.getElementById(prefix + "input" + i + "," + j).style.backgroundColor= "white"; 
                 }
-                if(newInput.value != 1 && newInput.value != 0){
-                    document.getElementById(prefix + "field" + i + "," + j).style.backgroundColor = "red";
-                    document.getElementById(prefix + "input" + i + "," + j).style.backgroundColor= "red"; 
-
-                }
-            })
-            newInput.addEventListener("click", e=>{
-                for(let i=0; i<5; i++){
-                    for(let j=0; j<5; j++){
-                        if(document.getElementById(prefix + "input" + i + "," + j).value == ""){
-                            document.getElementById(prefix + "input" + i + "," + j).value = document.getElementById("input" + i + "," + j).placeholder;
-                        } 
-                    }
-                }
-                newInput.placeholder = newInput.value;
-                newInput.value = "";
             })
             document.getElementById(inputId).appendChild(newInput);
         }
@@ -119,7 +106,7 @@ function messageValid(prefix){
     let validity = true;
     for(let i=0; i<5; i++){
         for(let j=0; j<5; j++){
-            if(document.getElementById(prefix + "input" + i + "," + j).value != 1 && document.getElementById(prefix + "input" + i + "," + j).value != 0){
+            if(document.getElementById(prefix + "input" + i + "," + j).innerText != 1 && document.getElementById(prefix + "input" + i + "," + j).innerText != 0){
                 validity = false;
             } 
         }
