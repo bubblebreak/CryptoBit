@@ -66,7 +66,6 @@ while True:
                     writeToComputer("nu_" + str(i) + "_" + str(knownMicrobits[i]).split("'")[1])
             if 'nmComp' in uartmessage:      # If all of the message has been received
                 uartOver = True
-                display.scroll("Over!")
             if 'ready' in uartmessage:
                 sendOnPermitted = True
                 if not allowRecipient:
@@ -81,10 +80,18 @@ while True:
                     generatedImages[imageIndex][i] = uartmessage.split("_")[3].split(":")[i]
                 for j in range(5):
                     radio.send("newImg_" + str(imageIndex) + "_" + str(j) + "_" + generatedImages[imageIndex][j])
+            if 'known' in uartmessage:
+                knownMicrobits.append([uartmessage.split("_")[3]])
+            if 'knownImg' in uartmessage:
+                imageIndex = len(generatedImages)
+                generatedImages.append(["","","","",""])
+                for i in range(5):
+                    generatedImages[imageIndex][i] = uartmessage.split("_")[3].split(":")[i]
             if 'yesEncrypt' in uartmessage:
                 encryptable = True
                 updateState("encrypt", "1")
             if 'noEncrypt' in uartmessage:
+                encryptable = False
                 updateState("encrypt", "0")
             if 'yesRecipient' in uartmessage:
                 allowRecipient = True
@@ -146,6 +153,9 @@ while True:
                     if senderName == senderId:
                         if not messageConstructIndex[messageIndex]:
                             if len(messageBit)>0:
+                                display.show("!")
+                                sleep(200)
+                                display.clear()
                                 messageConstructIndex[messageIndex] = True
                                 messageConstruct[messageIndex] = messageBit
                     messageComplete = True
