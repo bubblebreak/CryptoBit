@@ -98,6 +98,7 @@
     font-size: 1.3em;
     text-align: center;
     border: 1px solid lightgray;
+    cursor: pointer;
 }
 
 .inputSupport {
