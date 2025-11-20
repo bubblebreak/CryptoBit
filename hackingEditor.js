@@ -8,8 +8,9 @@ function setUpHacking(messageSender, messageReceiver, messageString){
         let hashCodeRow = 0;
         for(let j=0; j<5; j++){
             if(messageContent[i][j]>0){
+                document.getElementById("HB" + "input" + i + "," + j).classList.add("activeField");
                 document.getElementById("HB" + "field" + i + "," + j).style.backgroundColor = lightColor;
-                document.getElementById("HB" + "input" + i + "," + j).value = "1"; 
+                document.getElementById("HB" + "input" + i + "," + j).innerText = "1"; 
                 hashCodeRow +=1;
             }
         }
@@ -27,8 +28,8 @@ document.getElementById("updateHackButton").addEventListener("click", e=>{
     for(let i=0; i<5; i++){
         let rowarray = []
         for(let j=0; j<5; j++){
-            rowarray.push(Number(document.getElementById("HB" + "input" + i + "," + j).value))
-            document.getElementById("HB" + "input" + i + "," + j).value = "0";
+            rowarray.push(Number(document.getElementById("HB" + "input" + i + "," + j).innerText))
+            document.getElementById("HB" + "input" + i + "," + j).innerText = "0";
             document.getElementById("HB" + "field" + i + "," + j).style.backgroundColor = "white";
         }
         outputArray.push(rowarray);
