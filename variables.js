@@ -2,7 +2,9 @@ let lightColor = "#74BF04";
 let darkColor = "#488C03";
 
 let allowRecipient = false;
+let autoRecipient = false
 let allowEncryption = false;
+let autoEncryption = false;
 let allowHacking = false;
 
 let lastResetTime = new Date().getTime()/1000;
@@ -26,8 +28,10 @@ let newImages = []
 const features = [  ["serverButton", "Se Server", "server"], 
                     ["translaterButton", "Se Oversætter", "translate"], 
                     ["builderButton", "Tilføj Billede-byggeren", "build"],
-                    ["recipientButton", "Tilføj modtager", "receiver"],
+                    ["changeRecipientButton", "Tilføj modtager", "changeReciever"],
+                    ["recipientButton", "Automatiser modtager", "receiver"],
                     ["encryptButton", "Tillad Kryptering", "encrypt"],
+                    ["autoEncryptButton", "Automatiser Kryptering", "autoEncrypt"],
                     ["hackingButton", "Tillad Hacking", "hack"]];
 
 const localImages = [[[0,0,0,0,0],[0,1,0,1,0],[0,0,0,0,0],[1,0,0,0,1],[0,1,1,1,0]], 
