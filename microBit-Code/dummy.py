@@ -1,4 +1,4 @@
-radioChannel = 2        # all microbits should be on the same radio channel
+radioChannel = 1        # all microbits in a group should be on the same radio channel
 
 # Imports go at the top
 from microbit import *
@@ -15,6 +15,7 @@ recipientIndex = 0
 knownRecipients = 0
 knownRecipientList = []
 encryptable = False
+autoEncryptable = False
 allowRecipient = False
 outputMessage = []
 wrongMessage = False
@@ -198,6 +199,11 @@ while True:
                 encryptable = True
             else:
                 encryptable = False
+        if "autoEncrypt" in message:
+            if int(message.split("_")[1])>0:
+                autoEncryptable = True
+            else:
+                autoEncryptable = False
         if "recipient" in message:
             if int(message.split("_")[1])>0:
                 allowRecipient = True
@@ -250,6 +256,8 @@ while True:
         if encryptable:
             inputPress = 0
             analysisInProgress = True
+            if autoEncryptable:
+                    analysisInProgress = False
             correctInput = True
             while analysisInProgress:
                 if button_a.was_pressed():
@@ -281,8 +289,7 @@ while True:
                         else:
                             display.set_pixel(i,2,9)
                 if inputPress > 4:
-                    if accelerometer.was_gesture('shake'):
-                        analysisInProgress = False
+                    analysisInProgress = False
             if correctInput:
                 outputMessage = createEncryption(outputMessage)
                 encryptImage(outputMessage)
@@ -334,6 +341,15 @@ while True:
         choosingContent = True;
 
     while choosingContent:
+        message = radio.receive()
+        if message:
+            if id in message:
+                display.clear()
+                display.show(int(idNumber)+1)
+                choosingContent = False
+            if "encrypt" in message or "known" in message or "newImg" in message:
+                machine.reset()
+                
         if button_a.was_pressed():
             messageNumber -= 1
 
@@ -374,6 +390,17 @@ while True:
                 choosingContent = False
 
     while encryptingMessage:
+        message = radio.receive()
+        if message:
+            if id in message:
+                display.clear()
+                display.show(int(idNumber)+1)
+                outputMessage = []
+                code = []
+                encryptingMessage = False
+            if "encrypt" in message or "known" in message or "newImg" in message:
+                machine.reset()
+            
         if button_a.was_pressed():
             if len(code)<1:
                 display.clear()
@@ -404,38 +431,49 @@ while True:
                 else:
                     display.set_pixel(i,2,9)
 
+        if autoEncryptable:
+            for i in range(5):
+                code.append(str(random.randint(0,1)))
+
         if len(code)>4:
-            encryptionDone = True
+            display.clear()
+            for i in range(3):
+                for j in range(5):
+                    for k in range(5):
+                        if random.randint(0,1)>0:
+                            display.set_pixel(k,j,9)
+                        else:
+                            display.set_pixel(k,j,0)
+                sleep(500)
+            outputMessage = createEncryption(outputMessage)
             display.clear()
             display.show(Image(setImage(messageNumber, ledImages)))
-            while encryptionDone:
-                if accelerometer.was_gesture('shake'):     
-                    for i in range(3):
-                        for j in range(5):
-                            for k in range(5):
-                                if random.randint(0,1)>0:
-                                    display.set_pixel(k,j,9)
-                                else:
-                                    display.set_pixel(k,j,0)
-                        sleep(500)
-                    outputMessage = createEncryption(outputMessage)
-                    display.clear()
-                    display.show(Image(setImage(messageNumber, ledImages)))
-                    encryptImage(outputMessage)
-                    codeString = ""
-                    for i in range(5):
-                        codeString += code[i]
-                    code = []
-                    readyToSend = True
-                    encryptionDone = False
-            
+            encryptImage(outputMessage)
+            codeString = ""
+            for i in range(5):
+                codeString += code[i]
+            code = []
+            readyToSend = True
+    
             while readyToSend:
+                message = radio.receive()
+                if message:
+                    if id in message:
+                        display.clear()
+                        display.show(int(idNumber)+1)
+                        outputMessage = []
+                        codeString = ""
+                        readyToSend = False
+                        encryptingMessage = False
+                    if "encrypt" in message or "known" in message or "newImg" in message:
+                        machine.reset()
+                        
                 if pin_logo.is_touched():
                     display.show(Image.ARROW_E)
                     sleep(1000)
-                    knownRecipientList = setRecipients()
-                    display.show(knownRecipientList[0]+1)
                     if allowRecipient:
+                        knownRecipientList = setRecipients()
+                        display.show(knownRecipientList[0]+1)
                         choosingRecipient = True
                     else:
                         sendingMessage = True
@@ -443,6 +481,18 @@ while True:
                     readyToSend = False
                         
     while choosingRecipient:
+        message = radio.receive()
+        if message:
+            if id in message:
+                display.clear()
+                display.show(int(idNumber)+1)
+                outputMessage = []
+                codeString = ""
+                readyToSend = False
+                encryptingMessage = False
+            if "encrypt" in message or "known" in message or "newImg" in message:
+                machine.reset()
+                
         if button_a.was_pressed():
             recipientIndex -= 1
 
