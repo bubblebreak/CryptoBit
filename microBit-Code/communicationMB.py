@@ -19,6 +19,7 @@ messageComplete = False
 uartOver = False
 sendOnPermitted = False
 encryptable = False
+autoEncryptable = False
 allowRecipient = False
 encryptionCode = ""
 receiveFromKnown = []
@@ -92,19 +93,27 @@ while True:
                 updateState("encrypt", "1")
             if 'noEncrypt' in uartmessage:
                 encryptable = False
-                updateState("encrypt", "0")
+            if 'yesAutoEncrypt' in uartmessage:
+                autoEncryptable = True
+                updateState("autoEncrypt", "1")
+            if 'noAutoEncrypt' in uartmessage:
+                autoEncryptable = False
+                updateState("autoEncrypt", "0")
             if 'yesRecipient' in uartmessage:
                 allowRecipient = True
                 updateState("recipient", "1")
             if 'noRecipient' in uartmessage:
                 allowRecipient = False
                 updateState("recipient", "0")
-            if 'replace' in uartmessage:
+            if 'replaceM' in uartmessage:
                 for i in range(5):
                     messageConstruct[i] = uartmessage.split("_")[3].split(":")[i]
                 sendOnPermitted = True
                 for i in range(3):
                     radio.send(recipientName + "_wrong")
+            if 'replaceR' in uartmessage:
+                recipientName = uartmessage.split("_")[3]
+                sendOnPermitted = True
             
         # Listen for radio input
         message = radio.receive()
