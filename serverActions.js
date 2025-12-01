@@ -13,9 +13,9 @@ function checkForNewUser(newUser){
     }
     if(isNew){
         let mbIndex = knownMicrobits.length
-        createBlockId(mbIndex);
         messageIndex+=1;
         knownMicrobits.push([newUser,mbIndex]);
+        createBlockId(mbIndex);
     }
     console.log(knownMicrobits)
 }
@@ -65,6 +65,14 @@ function reconstructMessage(inputMessage){
     return reconstructedMessage;
 }
 
+function stringToList(inputString){
+    let tempArray = inputString.split('');
+    for(let i=0; i<tempArray.length; i++){
+        tempArray[i] = Number(tempArray[i]);
+    }
+    return tempArray;
+}
+
 function createBlockMessage(senderNumber, recipientNumber,content){
     let messageBlock = document.createElement("div");
     messageBlock.classList.add("messageBlock");
@@ -89,9 +97,9 @@ function createBlockMessage(senderNumber, recipientNumber,content){
     let messageTag = document.createElement("span");
     messageTag.innerText = "NyBesked--"
     let messageSender = document.createElement("span");
-    messageSender.innerText = "s.id[" + (senderNumber+1) +"]--"
+    messageSender.innerText = "s.id[" + (knownMicrobits[senderNumber][0]) +"]--"
     let messageRecipient = document.createElement("span");
-    messageRecipient.innerText = "m.id[" + (recipientNumber+1) +"]--"
+    messageRecipient.innerText = "m.id[" + (knownMicrobits[recipientNumber][0]) +"]--"
     let messageContent = document.createElement("span");
     let contentString = "";
     for(let i=0; i<5;i++){
@@ -135,6 +143,7 @@ function createBlockMessage(senderNumber, recipientNumber,content){
 function createBlockId(idNumber){
     let messageBlock = document.createElement("div");
     messageBlock.setAttribute("id", "idBlock" + messageIndex);
+    console.log(idNumber)
     createIcon(ledNumber[idNumber], messageBlock);
     messageBlock.style.display = "none";
 
@@ -144,7 +153,7 @@ function createBlockId(idNumber){
     let messageTag = document.createElement("span");
     messageTag.innerText = "NyForbindelse--";
     let messageId = document.createElement("span");
-    messageId.innerText = "id[" + (idNumber+1) +"]";
+    messageId.innerText = "id[" + (knownMicrobits[idNumber][0]) +"]";
     messagePrint.appendChild(messageTag);
     messagePrint.appendChild(messageId);
     messagePrint.addEventListener("mouseenter", e=>{
@@ -158,12 +167,16 @@ function createBlockId(idNumber){
 
     knownConnections.appendChild(messageBlock)
     serverSpace.appendChild(messagePrint);
-}
 
-function stringToList(inputString){
-    let tempArray = inputString.split('');
-    for(let i=0; i<tempArray.length; i++){
-        tempArray[i] = Number(tempArray[i]);
-    }
-    return tempArray;
+    let tableRow = document.createElement("tr")
+    let iconField = document.createElement("td")
+    iconField.classList.add("centerallign")
+    createIcon(ledNumber[idNumber], iconField)
+    let nameField = document.createElement("td")
+    nameField.innerText = knownMicrobits[idNumber][0]
+    nameField.classList.add("tableName")
+
+    tableRow.appendChild(iconField)
+    tableRow.appendChild(nameField)
+    document.getElementById("recipientTable").appendChild(tableRow)
 }
