@@ -47,7 +47,7 @@ document.getElementById("updateHackButton").addEventListener("click", e=>{
     }
 
     document.getElementById("hackingSpace").classList.toggle("hidden")
-    writeToMB("replace_" + mbMessageString);
+    writeToMB("replaceM_" + mbMessageString);
     createBlockMessage(getUserNumber(lastMessageStats[0]), getUserNumber(lastMessageStats[1]), outputArray)
     setTimeout(resetValues, 2000);
 })
