@@ -18,6 +18,9 @@ document.getElementById("imageButton").addEventListener("click", e=>{
 
 document.getElementById("inspectFeaturesButton").addEventListener("click", e=>{
     document.getElementById("featureContainer").classList.toggle("hidden")
+    if(!document.getElementById("tableContainer").classList.contains("hidden")){
+        document.getElementById("tableContainer").classList.toggle("hidden")
+    }
 })
 
 document.getElementById("includeNewFeature").addEventListener("click", e=>{
@@ -27,6 +30,13 @@ document.getElementById("includeNewFeature").addEventListener("click", e=>{
 document.getElementById("closeFeaturePopup").addEventListener("click", e=>{
     document.getElementById("featureInput").value = "";
     document.getElementById("featurePopUp").classList.toggle("hidden")
+})
+
+document.getElementById("inspectIdsButton").addEventListener("click", e=>{
+    document.getElementById("tableContainer").classList.toggle("hidden")
+    if(!document.getElementById("featureContainer").classList.contains("hidden")){
+        document.getElementById("featureContainer").classList.toggle("hidden")
+    }
 })
 
 document.getElementById("addFeaturePopup").addEventListener("click", e=>{
@@ -46,25 +56,40 @@ function detectFeatureRequest(featureCode){
     document.getElementById("featureInput").value = "";
     switch(featureCode.toLowerCase()){
         case "server":
-            document.getElementById("server" + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[0][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById("serverSpace").classList.toggle("hidden")
+            document.getElementById("trafficButton").classList.toggle("hidden")
             break;
         case "oversæt":
-            document.getElementById("translate" + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[1][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById("translaterSpace").classList.toggle("hidden")
             break;
         case "oversat":
-            document.getElementById("translate" + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[1][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById("imageButton").classList.toggle("hidden")
             break;
         case "byg":
-            document.getElementById("build" + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[2][2] + "Toggle").classList.toggle("hidden");
             break;
         case "modtager":
-            document.getElementById("receiver" + "Toggle").classList.toggle("hidden");
+            allowRecipient = true;
+            writeToMB("yesRecipient")
+            document.getElementById(features[3][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[4][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[4][0]).classList.toggle("toggleActive");
+            document.getElementById(features[4][0] + "Inner").classList.toggle("toggleInnerActive");
             break;
         case "krypter":
-            document.getElementById("encrypt" + "Toggle").classList.toggle("hidden");
+            allowEncryption = true;
+            writeToMB("yesEncrypt")
+            document.getElementById(features[5][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[6][2] + "Toggle").classList.toggle("hidden");
+            document.getElementById(features[6][0]).classList.toggle("toggleActive");
+            document.getElementById(features[6][0] + "Inner").classList.toggle("toggleInnerActive");
             break;
         case "hack":
-            document.getElementById("hack" + "Toggle").classList.toggle("hidden");
+            allowHacking = true;
+            document.getElementById(features[7][2] + "Toggle").classList.toggle("hidden");;
     }
 }
 
@@ -72,6 +97,9 @@ function addFeatureToggle(toggleId, toggleName, functionality){
     let toggleContainer = document.createElement("div");
     toggleContainer.classList.add("toggleButton");
     toggleContainer.classList.add("hidden");
+    if(functionality == features[4][2] || functionality == features[6][2]){
+        toggleContainer.classList.add("subToggle");
+    }
     toggleContainer.setAttribute("id", functionality + "Toggle")
     let toggleText = document.createElement("p");
     toggleText.classList.add("toggleText");
@@ -79,31 +107,32 @@ function addFeatureToggle(toggleId, toggleName, functionality){
     let buttonOuter = document.createElement("div");
     buttonOuter.setAttribute("id", toggleId);
     buttonOuter.classList.add("switch");
+    buttonOuter.classList.add("toggleActive");
     let buttonInner = document.createElement("div");
     buttonInner.setAttribute("id", toggleId + "Inner")
     buttonInner.classList.add("switchInner");
+    buttonInner.classList.add("toggleInnerActive");
 
     toggleContainer.appendChild(buttonOuter)
     buttonOuter.appendChild(buttonInner)
     toggleContainer.appendChild(toggleText)
 
-
     buttonOuter.addEventListener("click", e=>{
         buttonOuter.classList.toggle("toggleActive")
-        buttonInner.classList.toggle("toggleInnerActive ")
+        buttonInner.classList.toggle("toggleInnerActive")
 
         switch(functionality) {
-            case "server":
+            case features[0][2]:    // Server button
                 document.getElementById("serverSpace").classList.toggle("hidden")
                 document.getElementById("trafficButton").classList.toggle("hidden")
                 break;
-            case "translate":
+            case features[1][2]:    // Translater button
                 document.getElementById("translaterSpace").classList.toggle("hidden")
                 break;
-            case "build":
+            case features[2][2]:    // Builder button
                 document.getElementById("imageButton").classList.toggle("hidden")
                 break;
-            case "receiver":
+            case features[3][2]:    // Recipient button
                 if(allowRecipient){
                     allowRecipient = false
                     writeToMB("noRecipient")
@@ -112,16 +141,57 @@ function addFeatureToggle(toggleId, toggleName, functionality){
                     writeToMB("yesRecipient")
                 }
                 break;
-            case "encrypt":
+            case features[4][2]:    // Autorecipient button
+                if(allowRecipient){
+                    if(autoRecipient){
+                        autoRecipient = false
+                    } else {
+                        autoRecipient = true
+                    }
+                } else {
+                    buttonOuter.classList.toggle("toggleActive")
+                    buttonInner.classList.toggle("toggleInnerActive")
+                }
+                break;
+            case features[5][2]:    // Encrypt button
                 if(allowEncryption){
                     allowEncryption = false
                     writeToMB("noEncrypt")
+                    if(autoEncryption){
+                        autoEncryption = false;
+                        document.getElementById(features[6][0]).classList.toggle("toggleActive")
+                        document.getElementById(features[6][0] + "Inner").classList.toggle("toggleInnerActive")
+                    }
                 } else {
+                    if(allowHacking){
+                        allowHacking = false
+                        document.querySelector(':root').style.setProperty('--light-color', '#74BF04')
+                        document.querySelector(':root').style.setProperty('--dark-color', '#488C03')
+                        document.body.style.backgroundColor = "white";
+                        lightColor = "#74BF04"
+                        darkColor = "#488C03"
+                        document.getElementById(features[7][0]).classList.toggle("toggleActive")
+                        document.getElementById(features[7][0] + "Inner").classList.toggle("toggleInnerActive")
+                    }
                     allowEncryption = true
                     writeToMB("yesEncrypt")
                 }
                 break;
-            case "hack":
+            case features[6][2]:    // Autoencrypt button
+                if(allowEncryption){
+                    if(autoEncryption){
+                        autoEncryption = false
+                        writeToMB("noAutoEncrypt")
+                    } else {
+                        autoEncryption = true
+                        writeToMB("yesAutoEncrypt")
+                    }
+                } else {
+                    buttonOuter.classList.toggle("toggleActive")
+                    buttonInner.classList.toggle("toggleInnerActive")
+                }
+                break;
+            case features[7][2]:    // Hack button
                 if(allowHacking){
                     allowHacking = false
                     console.log("disable hacking")
@@ -131,6 +201,12 @@ function addFeatureToggle(toggleId, toggleName, functionality){
                     lightColor = "#74BF04"
                     darkColor = "#488C03"
                 } else {
+                    if(allowEncryption){
+                        allowEncryption = false
+                        writeToMB("noEncrypt")
+                        document.getElementById(features[4][0]).classList.toggle("toggleActive")
+                        document.getElementById(features[4][0] + "Inner").classList.toggle("toggleInnerActive")
+                    }
                     allowHacking = true
                     console.log("enable hacking")
                     document.querySelector(':root').style.setProperty('--light-color', '#D90D0D')
@@ -139,6 +215,7 @@ function addFeatureToggle(toggleId, toggleName, functionality){
                     lightColor = "#D90D0D"
                     darkColor = "#731212"
                 }
+            
             }
     })
 
