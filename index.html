@@ -6,13 +6,15 @@
         <title>Micro:bit Serveren</title>
         <link rel="stylesheet" href="stylesheet.css">
         <link rel="stylesheet" href="toggleStyle.css">
+        <link rel="stylesheet" href="popupStyle.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet">
     </head>
     <body>
 
-        <button id="inspectFeaturesButton" class="buttonStyle">Feature oversigt</button>        
+        <button id="inspectFeaturesButton" class="buttonStyle">Feature oversigt</button>  
+        <button id="inspectIdsButton" class="buttonStyle">Bruger navne og id</button>      
         <div id="featureContainer" class="hidden">
             <button id="includeNewFeature" class="buttonStyle">Tilføj feature</button>
             <div id="featurePopUp" class="hidden">
@@ -25,6 +27,15 @@
                     </div>       
                 </div>        
             </div>
+        </div>
+
+        <div id="tableContainer" class="hidden">
+            <table id="recipientTable">
+                <tr>
+                    <th>Navn</th>
+                    <th>Id</th>
+                </tr>
+            </table>
         </div>
 
         
@@ -70,21 +81,51 @@
         <div id="hackingSpace" class="hidden">
             <div id="hackingPopUp">
                 <h1>Hack beskeder</h1>
-                <p id="hackingDescription">Lav om i beskeden fra id[<span id="hackSender"></span>] til id[<span id="hachReciever"></span>]</p>
+                <p id="hackingDescription" class="popupDescription">Lav om i beskeden fra id[<span id="hackSender"></span>] til id[<span id="hachReciever"></span>]</p>
                 <div id="hacingContent">
                     <div id="inputAreaHack"></div>
                     <div id="outputAreaHack"></div>
                 </div>
-                <div id="hackingButtonSpace">
+                <div class="centerallign">
                     <button id="noUpdateHackButton"class="buttonStyle">Send videre uden ændringer</button>
                     <button id="updateHackButton" class="buttonStyle">Gem ændringer</button>
                 </div>
             </div>
         </div>
 
+        <div id="changeSpace" class="hidden">
+            <div id="changePopUp">
+                <h1>Besked oversigt</h1>
+                <div id="changeInformation" class="centerallign">
+                    <div id="changeSender"></div>
+                    <p class="popupDescription">vil sende</p>
+                    <div id="changeMessage"></div>
+                    <p class="popupDescription">til</p>
+                    <div id="changeRecipient"></div>
+                </div>
+                <div class="centerallign">
+                    <table id="changeRecipientTable">
+                        <tr>
+                            <th>Navn</th>
+                            <th>Id</th>
+                        </tr>
+                    </table>
+                </div>
+                <p class="popupDescription">Vælg modtager</p>
+                <div id="changeChooser" class="centerallign"></div>
+<!--
+                <div class="centerallign">
+                    <button id="noUpdateChangeButton"class="buttonStyle">Send videre uden ændringer</button>
+                    <button id="updateChangeButton" class="buttonStyle">Gem ændringer</button>
+                </div>
+-->
+            </div>
+        </div>
+
         <script src="variables.js"></script>
         <script src="serverActions.js"></script>
         <script src="hackingEditor.js"></script>
+        <script src="recipientChanger.js"></script>
         <script src="script.js"></script>
         <script src="imageEditor.js"></script>
         <script src="featureAddition.js"></script>
