@@ -39,10 +39,6 @@
     justify-content: space-evenly;
 }
 
-.terminalEntry{
-    cursor: pointer;
-}
-
 #gridSpace {
     display: flex;
     flex-direction: row;
@@ -154,41 +150,14 @@ h1 {
     cursor: not-allowed;
 }
 
-#hackingSpace {
-    background-color: RGB(107, 0, 0, 0.70);
-    position: absolute;
-    margin: 0px;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-}
-
-#hackingPopUp {
-    background-color: RGB(200, 130, 130);
-    border: 1vh solid var(--dark-color);
-    width: 70vw;
-    height: 70vh;
-    left: 15vw;
-    position: relative;
-    top: 10vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-}
-
-#inputAreaHack, #outputAreaHack {
-    display: flex;
-    justify-content: center;
-}
-
-#hackingDescription {
-    text-align: center;
-    font-size: 1.6em;
+.tableName{
+    font-size: 1.3em;
     font-family: "Momo Trust Display", sans-serif;
 }
 
-#hackingButtonSpace {
-    display: flex;
-    justify-content: space-evenly;
+#changeRecipientTable {
+    width: 300px;
+    text-align: center;
+    font-family: "Momo Trust Display", sans-serif;
+    border: 2px solid var(--light-color);
 }
