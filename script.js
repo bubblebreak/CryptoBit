@@ -28,11 +28,11 @@ let lastMessage = "";
 async function writeToMB(message){
   //event.preventDefault();
   if (!port) {
+    console.log("looking for port")
     port = await navigator.serial.requestPort();
     await port.open({ baudRate: 9600 });
     writer = port.writable.getWriter();
     reader = port.readable.getReader();
-    console.log(typeof(navigator.serial.requestPort()))
     readLoop();
   }
   // All messages sent starts with "__" and ends with "_" to allow the micro:bit to decode the message along with relevant meta data
@@ -173,6 +173,11 @@ function checkMessage(message){
           document.getElementById("hackingSpace").classList.toggle("hidden")
           writeToMB("nmComp");
           setUpHacking(messageSender, messageReceiver, messageString)
+        } else if(allowRecipient && !autoRecipient){
+          console.log("let it start!")
+          writeToMB("nmComp");
+          document.getElementById("changeSpace").classList.toggle("hidden")
+          setUpChanger(messageSender, messageReceiver, messageString)
         } else {
           printMessage(messageSender, messageReceiver, messageString);
           writeToMB("ready");
