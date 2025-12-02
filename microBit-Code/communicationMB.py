@@ -145,6 +145,10 @@ while True:
                         radio.send("encrypt_1")
                     else:
                         radio.send("encrypt_0")
+                    if autoEncryptable:
+                        radio.send("autoEncrypt_1")
+                    else:
+                        radio.send("autoEncrypt_0")
                     if allowRecipient:
                         radio.send("recipient_1")
                     else:
